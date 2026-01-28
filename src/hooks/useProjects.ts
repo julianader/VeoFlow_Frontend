@@ -13,7 +13,7 @@ export const useProjects = () => {
     const load = async () => {
       const base = api.baseUrl;
       try {
-        const res = await api.get('/projects');
+        const res = await api.get('/api/projects');
         if (Array.isArray(res)) {
           setProjects(res);
           setIsLoaded(true);
@@ -52,7 +52,7 @@ export const useProjects = () => {
       
       if (!project.id || isTimestampId) {
         // Create new project on backend
-        const response = await api.post('/projects', {
+        const response = await api.post('/api/projects', {
           title: project.name,
           description: project.name,
           videoSettings: {
@@ -67,7 +67,7 @@ export const useProjects = () => {
         if (project.scenes && project.scenes.length > 0) {
           for (const scene of project.scenes) {
             try {
-              await api.post(`/projects/${backendProjectId}/scenes`, {
+              await api.post(`/api/projects/${backendProjectId}/scenes`, {
                 title: scene.prompt.substring(0, 50) + (scene.prompt.length > 50 ? '...' : ''),
                 script: scene.prompt,
                 duration: scene.duration * 1000, // Convert to milliseconds
@@ -96,7 +96,7 @@ export const useProjects = () => {
       }
       
       // Update existing project
-      await api.put(`/projects/${project.id}`, {
+      await api.put(`/api/projects/${project.id}`, {
         title: project.name,
         description: project.name,
         videoSettings: {
@@ -158,7 +158,7 @@ export const useProjects = () => {
       const isMongoId = id && /^[0-9a-fA-F]{24}$/.test(id);
       if (isMongoId) {
         try {
-          await api.del(`/projects/${id}`);
+          await api.del(`/api/projects/${id}`);
         } catch (err) {
           console.warn('Failed to delete project on backend:', err);
         }

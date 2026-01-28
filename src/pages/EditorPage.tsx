@@ -152,7 +152,7 @@ export default function EditorPage({ onBack, onViewProjects, editingProject }: E
   const handleSaveVoiceOver = async (sceneId: string, text: string, voiceType: string) => {
     try {
       const api = await apiImport();
-      const res = await api.post('/videos/generate-voiceover', {
+      const res = await api.post('/api/videos/generate-voiceover', {
         sceneId,
         text,
         voiceType
@@ -191,7 +191,7 @@ export default function EditorPage({ onBack, onViewProjects, editingProject }: E
     try {
       const api = await apiImport();
       // Only send the video URL, not the full scenes
-      await api.put(`/projects/${projectId}`, {
+      await api.put(`/api/projects/${projectId}`, {
         finalVideoUrl: videoUrl,
       });
       console.log('Video URL saved to project:', videoUrl);
@@ -260,7 +260,7 @@ export default function EditorPage({ onBack, onViewProjects, editingProject }: E
         const scene = scenes[i];
         setJobStatus(`Generating voice ${i + 1}/${scenes.length}...`);
         
-        await api.post('/videos/generate-voiceover', { 
+        await api.post('/api/videos/generate-voiceover', { 
           sceneId: scene.id, 
           projectId: projectId || 'temp',
           text: scene.prompt
@@ -306,7 +306,7 @@ export default function EditorPage({ onBack, onViewProjects, editingProject }: E
       
       console.log('Combined prompt with styles and durations:', combinedPrompt);
       
-      const res = await api.post('/videos/generate-video', { 
+      const res = await api.post('/api/videos/generate-video', { 
         sceneId: scenes[0]?.id || 'combined', 
         projectId: projectId || 'temp',
         prompt: combinedPrompt,
@@ -343,7 +343,7 @@ export default function EditorPage({ onBack, onViewProjects, editingProject }: E
     if (pollingRef.current) window.clearInterval(pollingRef.current);
     pollingRef.current = window.setInterval(async () => {
       try {
-        const res = await api.get(`/videos/job/${jobId}`);
+        const res = await api.get(`/api/videos/job/${jobId}`);
         const status = res?.data?.job?.status || 'unknown';
         const progress = res?.data?.job?.progress || 0;
         const videoUrl = res?.data?.job?.videoUrl; // GCS signed URL (preferred)
